@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.fasterxml.jackson.databind.node.IntNode;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -22,13 +23,29 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_PROFILE = 100;
     private FirebaseUser user;
     private FirebaseAuth auth;
 
     @Override
     protected void onStart() {
         super.onStart();
-        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        if (user!=null){
+            FirebaseDatabase db = FirebaseDatabase.getInstance();
+            DatabaseReference phone =
+                    db.getReference("users").child(user.getUid()).child("phone");
+            DatabaseReference nickname =
+                    db.getReference("users").child(user.getUid()).child("nickname");
+            if (phone==null || nickname==null){
+                Intent intent = new Intent(this, ProfileActivity.class);
+                startActivityForResult(intent, REQUEST_PROFILE);
+            }
+            Log.d("MainActivity", "Phone:"+phone);
+        }
+
+
+        /*auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
         if (user !=null) {
             String uid = user.getUid();
@@ -47,6 +64,16 @@ public class MainActivity extends AppCompatActivity {
             friendRef.setValue(map);
 
 
+        }*/
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_PROFILE){
+            if (resultCode == RESULT_OK){
+                //done with Profile entering
+
+            }
         }
     }
 
@@ -62,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        auth = FirebaseAuth.getInstance();
         // check login?
         if (FirebaseAuth.getInstance().getCurrentUser()==null){
             Intent intent = new Intent(this, LoginActivity.class);
