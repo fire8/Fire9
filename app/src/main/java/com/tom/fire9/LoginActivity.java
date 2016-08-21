@@ -1,5 +1,6 @@
 package com.tom.fire9;
 
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 if (firebaseAuth.getCurrentUser()!=null){
                     Toast.makeText(LoginActivity.this, "Logon", Toast.LENGTH_LONG).show();
+
                 }
             }
         });
@@ -42,21 +44,56 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void login(View v){
-        String email = edEmail.getText().toString();
-        String password = edPassword.getText().toString();
+        final String email = edEmail.getText().toString();
+        final String password = edPassword.getText().toString();
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        String msg = null;
                         if (task.isSuccessful()){
-                            msg = "Login Successful";
+                            new AlertDialog.Builder(LoginActivity.this)
+                                    .setMessage("Login Successful")
+                                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            finish();
+                                        }
+                                    })
+                                    .show();
                         }else{
-                            msg = "Login Failed";
+                            register(email , password);
                         }
-                        new AlertDialog.Builder(LoginActivity.this)
-                                .setMessage(msg)
-                                .show();
+
+                    }
+                });
+    }
+
+    private void register(final String email, final String password) {
+        // failed
+        new AlertDialog.Builder(LoginActivity.this)
+                .setMessage("Login Failed, Register?")
+                .setPositiveButton("Regiser", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        createUser(email, password);
+                    }
+                })
+                .setNeutralButton("Cancel", null)
+                .show();
+    }
+
+    private void createUser(String email, String password) {
+        auth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()){
+                            new AlertDialog.Builder(LoginActivity.this)
+                                    .setMessage("Register successful")
+                                    .show();
+                        }else{
+
+                        }
                     }
                 });
     }
