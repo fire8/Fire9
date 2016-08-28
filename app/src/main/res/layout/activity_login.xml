@@ -44,4 +44,16 @@
         android:text="Login"
         android:id="@+id/button"
         android:onClick="login" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="google"
+        android:id="@+id/button2"
+        android:onClick="google" />
+
+    <com.facebook.login.widget.LoginButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button_facebook_login" />
 </LinearLayout>

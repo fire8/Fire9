@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Fire9</string>
+    <string name="web_application_client_id">792980938427-208g0i20u9o1oq8kprufjm4bpkr8pjh2.apps.googleusercontent.com</string>
+    <string name="facebook_app_id">1119433031445949</string>
 </resources>
